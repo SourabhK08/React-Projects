@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import "./App.css";
 
 function App() {
@@ -19,10 +19,34 @@ function App() {
 
     for (let i = 1; i <= length; i++) {
       let char = Math.floor(Math.random() * str.length + 1); // index value of char
-      password = str.charAt(char);
+      password += str.charAt(char);
     }
     setPassword(password);
   }, [length, numberAllowed, charAllowed, setPassword]);
+
+  // in this [] we're mentionig those methods which we want to OPTIMIZE , callback is responsible not only for running the function but MEMORIZE by putting into cache memory kuch chg hoga to cache m rkha jaiga
+
+  //passwordGenerator(); TOO MANY RE RENDERS , we CAN'T CALL DIRECTLY , NEED TO USE USE EFFECT
+
+  // see https://youtu.be/Lt4vy8hfc-s?si=VrLjHFvwj7_K-DqC @ 41:00
+
+  useEffect(() => {
+    passwordGenerator();
+  }, [length, charAllowed, numberAllowed, passwordGenerator]);
+
+  // in this [] agar in mai kuch bhi chg hota h to dubara se run kr do apn un methods ko mention krte h
+
+  // useRef hook
+
+  const pswdRef = useRef(null);
+
+  const copyPasswordToClipboard = useCallback(() => {
+    pswdRef.current?.select(); // just for optimization and user experiecne we use ref
+
+    // pswdRef.current?.setSelectionRange(0, 3);
+
+    window.navigator.clipboard.writeText(password);
+  }, [password]);
 
   return (
     <>
@@ -38,8 +62,10 @@ function App() {
             className="outline-none w-full px-3 py-1"
             placeholder="Password"
             readOnly
+            ref={pswdRef}
           />
           <button
+            onClick={copyPasswordToClipboard}
             style={{
               backgroundColor: "#4CAF50",
               border: "none",
@@ -47,10 +73,19 @@ function App() {
               padding: "15px 32px",
               textAlign: "center",
               fontWeight: "bold",
+              transition: "background-color 0.3s",
+              cursor: "pointer",
+            }}
+            onMouseOver={(e) => {
+              e.target.style.backgroundColor = "#45a029"; // Change background color on hover
+              e.target.style.transform = "scale(1.2)"; // Apply zoom-in effect
+            }}
+            onMouseOut={(e) => {
+              e.target.style.backgroundColor = "#4CAF50"; // Restore original background color
+              e.target.style.transform = "scale(1)"; // Remove zoom-in effect
             }}
           >
-            {" "}
-            Copy{" "}
+            Copy
           </button>
         </div>
 
