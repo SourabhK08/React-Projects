@@ -6,11 +6,7 @@ import Footer from "./components/footer/Footer";
 function App() {
   const [count, setCount] = useState(0);
 
-  return (
-    <>
-      <h2 className="text-center font-bold"> React router </h2>
-    </>
-  );
+  return <></>;
 }
 
 export default App;
