@@ -36,6 +36,7 @@ function App() {
 
       <Card username="sourabh" textBtn="click me" />
       <Card username="richa" textBtn="show me" />
+      <Card username="souri" />
     </>
   );
 }
